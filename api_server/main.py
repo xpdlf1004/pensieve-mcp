@@ -117,7 +117,7 @@ async def register(user: UserCreate):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    
+
     # 사용자 생성
     hashed_password = pwd_context.hash(user.password)
     user_doc = {
@@ -127,7 +127,7 @@ async def register(user: UserCreate):
         "created_at": datetime.utcnow()
     }
     await users_collection.insert_one(user_doc)
-    
+
     # 토큰 생성
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token}
@@ -141,7 +141,7 @@ async def login(user: UserLogin):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password"
         )
-    
+
     # 토큰 생성
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token}
@@ -399,7 +399,7 @@ mcp = FastMCP("Pensieve MCP")
 mcp_api_tokens: Dict[str, str] = {}
 
 @mcp.tool()
-async def register(email: str, password: str) -> str:
+async def mcp_register(email: str, password: str) -> str:
     """새 계정을 등록합니다"""
     try:
         user = await users_collection.find_one({"email": email})
@@ -428,7 +428,7 @@ async def register(email: str, password: str) -> str:
         return f"오류 발생: {str(e)}"
 
 @mcp.tool()
-async def login(email: str, password: str) -> str:
+async def mcp_login(email: str, password: str) -> str:
     """이메일과 비밀번호로 로그인합니다"""
     try:
         db_user = await users_collection.find_one({"email": email})
