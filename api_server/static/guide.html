@@ -45,7 +45,7 @@
         <!-- Page Header -->
         <div class="text-center mb-12">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">Pensieve 사용 가이드</h1>
-            <p class="text-xl text-gray-600">AI 대화를 효율적으로 관리하는 방법을 알아보세요</p>
+            <p class="text-xl text-gray-600">Claude Code와 함께 AI 대화를 효율적으로 관리하세요</p>
         </div>
 
         <!-- Features Section -->
@@ -83,75 +83,262 @@
             </div>
         </div>
 
-        <!-- How to Use Section -->
-        <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">📚 사용 방법</h2>
+        <!-- Setup Reference -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-12 text-center">
+            <h2 class="text-xl font-bold text-gray-900 mb-3">🚀 시작하기</h2>
+            <p class="text-gray-700 mb-4">아직 Pensieve를 설정하지 않으셨나요?</p>
+            <a href="/setup" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-md">
+                <i class="fas fa-cog mr-2"></i> MCP 설정 가이드 보기
+            </a>
+        </div>
 
-            <div class="space-y-6">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">1. MCP 서버 설정</h3>
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-gray-700 mb-2">Claude Desktop 앱에서 MCP 설정을 추가합니다:</p>
-                        <ul class="list-disc list-inside space-y-1 text-gray-600 ml-4">
-                            <li>설정 메뉴에서 Developer → Edit Config 선택</li>
-                            <li>제공된 설정 코드를 복사하여 붙여넣기</li>
-                            <li>Claude 앱 재시작</li>
-                        </ul>
+        <!-- Real-world Usage Scenarios -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">💼 실제 사용 시나리오</h2>
+
+            <!-- Scenario 1: Recipe Collection -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="flex items-start mb-6">
+                    <div class="flex-shrink-0 bg-orange-100 rounded-full p-3">
+                        <i class="fas fa-utensils text-orange-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">나만의 레시피 컬렉션</h3>
+                        <p class="text-gray-600">요리 레시피를 물어보고 저장해서 나중에 다시 찾아보기</p>
                     </div>
                 </div>
 
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">2. 대화 저장하기</h3>
+                <div class="space-y-4">
                     <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-gray-700 mb-2">Claude와 대화할 때 다음과 같이 말하세요:</p>
-                        <div class="space-y-2">
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "Pensieve에 이 대화를 저장해줘"
-                            </code>
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "이 대화를 'Python 학습'이라는 제목으로 저장해줘"
-                            </code>
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "'React 컴포넌트 설계'로 저장하고 태그는 'react', 'frontend'로 해줘"
-                            </code>
-                        </div>
-                        <p class="text-sm text-gray-600 mt-2">💡 자연스럽게 말하면 Claude가 적절한 제목과 태그를 제안해줍니다!</p>
+                        <p class="text-sm text-gray-600 mb-2">💬 상황: 파스타 레시피를 물어본 후</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            이 대화를 Pensieve에 저장해줘. 제목: "크림 파스타 레시피 - 4인분", 태그: "요리, 파스타, 간단요리"
+                        </code>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">💬 다음 주말, 요리하려고 할 때</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            Pensieve에서 "파스타" 레시피 찾아줘
+                        </code>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-4">
+                        <p class="text-sm text-green-700">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            <strong>효과:</strong> 맛있게 만들었던 레시피를 언제든 다시 활용 가능
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 2: Travel Planning -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="flex items-start mb-6">
+                    <div class="flex-shrink-0 bg-blue-100 rounded-full p-3">
+                        <i class="fas fa-plane text-blue-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">여행 계획 아카이브</h3>
+                        <p class="text-gray-600">여행지 추천과 일정 계획을 저장해서 실제 여행에 활용</p>
                     </div>
                 </div>
 
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">3. 대화 검색하기</h3>
+                <div class="space-y-4">
                     <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-gray-700 mb-2">저장된 대화를 찾고 싶을 때:</p>
-                        <div class="space-y-2">
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "Pensieve에서 Python 관련 대화를 찾아줘"
-                            </code>
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "저장된 대화 중에서 '리액트'가 포함된 것들 보여줘"
-                            </code>
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "지난주에 저장한 대화들을 불러와줘"
-                            </code>
-                        </div>
-                        <p class="text-sm text-gray-600 mt-2">웹 대시보드에서도 검색 기능을 사용할 수 있습니다.</p>
+                        <p class="text-sm text-gray-600 mb-2">💬 상황: 제주도 3박 4일 여행 계획 짜기</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            이 대화를 저장해줘. 제목: "제주도 3박4일 여행 계획 - 렌터카 일정", 태그: "여행, 제주도, 2024"
+                        </code>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">💬 출발 전날, 일정 확인</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            Pensieve에서 "제주도 여행" 관련 대화 불러와줘
+                        </code>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-4">
+                        <p class="text-sm text-green-700">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            <strong>효과:</strong> 세심하게 계획한 일정을 현장에서 바로 확인
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 3: Health & Fitness -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="flex items-start mb-6">
+                    <div class="flex-shrink-0 bg-green-100 rounded-full p-3">
+                        <i class="fas fa-dumbbell text-green-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">운동 루틴 관리</h3>
+                        <p class="text-gray-600">맞춤 운동 루틴과 식단 계획을 저장해서 꾸준히 실천</p>
                     </div>
                 </div>
 
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">4. 태그로 찾기</h3>
+                <div class="space-y-4">
                     <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-gray-700 mb-2">특정 주제의 대화만 보고 싶을 때:</p>
-                        <div class="space-y-2">
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "javascript 태그가 달린 대화들 보여줘"
-                            </code>
-                            <code class="block bg-gray-800 text-green-400 p-3 rounded">
-                                "프로그래밍 관련 대화만 골라서 보여줘"
-                            </code>
-                        </div>
-                        <p class="text-sm text-gray-600 mt-2">태그를 활용하면 주제별로 체계적으로 대화를 정리할 수 있습니다.</p>
+                        <p class="text-sm text-gray-600 mb-2">💬 상황: 홈트레이닝 루틴 추천받은 후</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            이 대화를 저장해줘. 제목: "홈트 30분 루틴 - 상체 집중", 태그: "운동, 홈트, 상체"
+                        </code>
                     </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">💬 다음 운동 날</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            Pensieve에서 "홈트" 태그 있는 운동 루틴 보여줘
+                        </code>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-4">
+                        <p class="text-sm text-green-700">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            <strong>효과:</strong> 체계적인 운동 루틴으로 꾸준한 건강 관리
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 4: Book & Movie Reviews -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="flex items-start mb-6">
+                    <div class="flex-shrink-0 bg-purple-100 rounded-full p-3">
+                        <i class="fas fa-book text-purple-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">책/영화 감상 기록</h3>
+                        <p class="text-gray-600">읽은 책과 본 영화에 대한 생각을 정리하고 추천받기</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">💬 상황: 영화 '인터스텔라'에 대해 깊이 있는 대화 후</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            저장해줘. 제목: "인터스텔라 - 시간과 차원에 대한 토론", 태그: "영화, SF, 명작"
+                        </code>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">💬 친구에게 SF 영화 추천할 때</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            Pensieve에서 "SF" 태그 있는 영화 대화 찾아줘
+                        </code>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-4">
+                        <p class="text-sm text-green-700">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            <strong>효과:</strong> 나만의 감상 기록과 추천 데이터베이스 구축
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 5: Language Learning -->
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <div class="flex items-start mb-6">
+                    <div class="flex-shrink-0 bg-pink-100 rounded-full p-3">
+                        <i class="fas fa-language text-pink-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">외국어 학습 노트</h3>
+                        <p class="text-gray-600">헷갈리는 문법과 표현을 정리해서 반복 학습</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">💬 상황: 영어 관사 사용법에 대해 자세히 물어본 후</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            이 대화를 저장해줘. 제목: "영어 관사 a/an/the 완벽 정리", 태그: "영어, 문법, 관사"
+                        </code>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">💬 영어 글 쓰다가 헷갈릴 때</p>
+                        <code class="block bg-gray-800 text-green-400 p-3 rounded mt-2">
+                            Pensieve에서 "관사" 관련 문법 대화 불러와줘
+                        </code>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-4">
+                        <p class="text-sm text-green-700">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            <strong>효과:</strong> 개인 맞춤 학습 자료로 효율적인 언어 습득
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Highlights -->
+        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">🎯 이런 기능도 지원합니다</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-list text-indigo-600 text-xl mr-3"></i>
+                        <h4 class="font-semibold text-gray-900">전체 대화 목록 조회</h4>
+                    </div>
+                    <code class="block bg-gray-800 text-green-400 p-2 rounded text-sm">
+                        Pensieve에 저장된 모든 대화 목록을 보여줘
+                    </code>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-search text-green-600 text-xl mr-3"></i>
+                        <h4 class="font-semibold text-gray-900">키워드로 검색</h4>
+                    </div>
+                    <code class="block bg-gray-800 text-green-400 p-2 rounded text-sm">
+                        Pensieve에서 "React hooks" 검색해줘
+                    </code>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-download text-blue-600 text-xl mr-3"></i>
+                        <h4 class="font-semibold text-gray-900">대화 불러오기</h4>
+                    </div>
+                    <code class="block bg-gray-800 text-green-400 p-2 rounded text-sm">
+                        Pensieve에서 ID "abc123"인 대화를 불러와줘
+                    </code>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-tags text-purple-600 text-xl mr-3"></i>
+                        <h4 class="font-semibold text-gray-900">태그로 필터링</h4>
+                    </div>
+                    <code class="block bg-gray-800 text-green-400 p-2 rounded text-sm">
+                        "python" 태그가 있는 대화만 보여줘
+                    </code>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-clock text-yellow-600 text-xl mr-3"></i>
+                        <h4 class="font-semibold text-gray-900">날짜별 조회</h4>
+                    </div>
+                    <code class="block bg-gray-800 text-green-400 p-2 rounded text-sm">
+                        지난주에 저장한 대화들을 보여줘
+                    </code>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-chart-line text-red-600 text-xl mr-3"></i>
+                        <h4 class="font-semibold text-gray-900">웹 대시보드</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        브라우저에서 모든 대화를 시각화하고 관리
+                    </p>
                 </div>
             </div>
         </div>

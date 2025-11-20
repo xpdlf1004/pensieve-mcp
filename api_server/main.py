@@ -399,7 +399,7 @@ mcp = FastMCP("Pensieve MCP")
 mcp_api_tokens: Dict[str, str] = {}
 
 @mcp.tool()
-async def register(email: str, password: str) -> str:
+async def mcp_register(email: str, password: str) -> str:
     """새 계정을 등록합니다
 
     Args:
@@ -433,7 +433,7 @@ async def register(email: str, password: str) -> str:
         return f"오류 발생: {str(e)}"
 
 @mcp.tool()
-async def login(email: str, password: str) -> str:
+async def mcp_login(email: str, password: str) -> str:
     """이메일과 비밀번호로 로그인합니다
 
     Args:
