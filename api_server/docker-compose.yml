@@ -1,16 +1,7 @@
 version: '3.8'
 
 services:
-  api:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
-      - MONGODB_URL=${MONGODB_URL:-mongodb://mongo:27017}
-    depends_on:
-      - mongo
-
+  # MongoDB
   mongo:
     image: mongo:7.0
     ports:
@@ -20,6 +11,23 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # API 서버 (REST API + MCP SSE 통합)
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - MONGODB_URL=${MONGODB_URL:-mongodb://admin:password@mongo:27017/pensieve?authSource=admin}
+    depends_on:
+      mongo:
+        condition: service_healthy
 
 volumes:
   mongo_data:

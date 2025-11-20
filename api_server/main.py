@@ -3,7 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 from jose import jwt
@@ -11,6 +11,10 @@ import os
 from uuid import uuid4
 import motor.motor_asyncio
 from passlib.context import CryptContext
+import json
+
+# MCP 임포트
+from fastmcp import FastMCP
 
 app = FastAPI(title="Pensieve API", version="1.0.0")
 
@@ -45,7 +49,8 @@ class UserCreate(BaseModel):
     email: EmailStr  # 이메일 형식 검증
     password: str
     
-    @validator('password')
+    @field_validator('password')
+    @classmethod
     def validate_password(cls, v):
         if len(v) < 6:
             raise ValueError('비밀번호는 최소 6자 이상이어야 합니다')
@@ -386,8 +391,216 @@ async def api_delete_conversation(
 async def health_check():
     return {"message": "Pensieve API", "version": "1.0.0", "status": "healthy"}
 
-# 정적 파일 서빙 (라우터들 이후에 마운트)
+# ==================== MCP SSE 서버 ====================
+# FastMCP 인스턴스
+mcp = FastMCP("Pensieve MCP")
+
+# MCP 세션별 토큰 저장
+mcp_api_tokens: Dict[str, str] = {}
+
+@mcp.tool()
+async def register(email: str, password: str) -> str:
+    """새 계정을 등록합니다"""
+    try:
+        user = await users_collection.find_one({"email": email})
+        if user:
+            return "이미 등록된 이메일입니다"
+
+        if len(password) < 6:
+            return "비밀번호는 최소 6자 이상이어야 합니다"
+        if len(password.encode('utf-8')) > 72:
+            return "비밀번호는 72바이트 이하여야 합니다"
+
+        hashed_password = pwd_context.hash(password)
+        user_doc = {
+            "_id": str(uuid4()),
+            "email": email,
+            "hashed_password": hashed_password,
+            "created_at": datetime.utcnow()
+        }
+        await users_collection.insert_one(user_doc)
+
+        token = create_access_token(data={"sub": email})
+        mcp_api_tokens[email] = token
+
+        return f"회원가입 성공! 토큰이 자동으로 설정되었습니다."
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+@mcp.tool()
+async def login(email: str, password: str) -> str:
+    """이메일과 비밀번호로 로그인합니다"""
+    try:
+        db_user = await users_collection.find_one({"email": email})
+        if not db_user or not pwd_context.verify(password, db_user["hashed_password"]):
+            return "로그인 실패: 이메일 또는 비밀번호가 잘못되었습니다"
+
+        token = create_access_token(data={"sub": email})
+        mcp_api_tokens[email] = token
+
+        return f"로그인 성공! 토큰이 자동으로 설정되었습니다."
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+@mcp.tool()
+async def set_api_token(email: str, token: str) -> str:
+    """API 토큰을 수동으로 설정합니다"""
+    try:
+        mcp_api_tokens[email] = token
+        return "API 토큰이 설정되었습니다. 이제 대화를 저장하고 불러올 수 있습니다."
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+async def get_mcp_user(email: str):
+    """MCP 토큰으로 사용자 인증"""
+    token = mcp_api_tokens.get(email)
+    if not token:
+        raise HTTPException(status_code=401, detail="먼저 로그인해주세요")
+
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_email = payload.get("sub")
+        user = await users_collection.find_one({"email": user_email})
+        if not user:
+            raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다")
+        return user
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="토큰이 만료되었습니다")
+
+@mcp.tool()
+async def save_conversation(email: str, messages: list, metadata: dict = None) -> str:
+    """대화 내역을 저장합니다"""
+    try:
+        user = await get_mcp_user(email)
+
+        conversation_doc = {
+            "_id": str(uuid4()),
+            "user_id": user["_id"],
+            "messages": messages,
+            "metadata": metadata or {},
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        await conversations_collection.insert_one(conversation_doc)
+        return f"대화가 저장되었습니다. ID: {conversation_doc['_id']}"
+    except HTTPException as e:
+        return f"인증 오류: {e.detail}"
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+@mcp.tool()
+async def load_conversation(email: str, conversation_id: str) -> str:
+    """저장된 대화를 불러옵니다"""
+    try:
+        user = await get_mcp_user(email)
+
+        conv = await conversations_collection.find_one({
+            "_id": conversation_id,
+            "user_id": user["_id"]
+        })
+
+        if not conv:
+            return f"대화를 찾을 수 없습니다: {conversation_id}"
+
+        return json.dumps(conv, default=str, ensure_ascii=False, indent=2)
+    except HTTPException as e:
+        return f"인증 오류: {e.detail}"
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+@mcp.tool()
+async def list_conversations(email: str, limit: int = 50, offset: int = 0) -> str:
+    """저장된 대화 목록을 조회합니다"""
+    try:
+        user = await get_mcp_user(email)
+
+        cursor = conversations_collection.find({"user_id": user["_id"]}).sort("created_at", -1).limit(limit).skip(offset)
+        convs = []
+        async for conv in cursor:
+            convs.append({
+                "id": conv["_id"],
+                "metadata": conv.get("metadata", {}),
+                "created_at": str(conv["created_at"]),
+                "message_count": len(conv.get("messages", []))
+            })
+
+        return json.dumps(convs, ensure_ascii=False, indent=2)
+    except HTTPException as e:
+        return f"인증 오류: {e.detail}"
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+@mcp.tool()
+async def search_conversations(email: str, query: str, limit: int = 20) -> str:
+    """대화 내용을 검색합니다"""
+    try:
+        user = await get_mcp_user(email)
+
+        cursor = conversations_collection.find({
+            "user_id": user["_id"],
+            "messages.content": {"$regex": query, "$options": "i"}
+        }).limit(limit)
+
+        results = []
+        async for conv in cursor:
+            matched_message = None
+            for msg in conv.get("messages", []):
+                if query.lower() in msg.get("content", "").lower():
+                    matched_message = msg
+                    break
+
+            results.append({
+                "id": conv["_id"],
+                "metadata": conv.get("metadata", {}),
+                "created_at": str(conv["created_at"]),
+                "matched_message": matched_message,
+                "message_count": len(conv.get("messages", []))
+            })
+
+        return json.dumps(results, ensure_ascii=False, indent=2)
+    except HTTPException as e:
+        return f"인증 오류: {e.detail}"
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+@mcp.tool()
+async def append_to_conversation(email: str, conversation_id: str, messages: list) -> str:
+    """기존 대화에 메시지를 추가합니다"""
+    try:
+        user = await get_mcp_user(email)
+
+        conv = await conversations_collection.find_one({
+            "_id": conversation_id,
+            "user_id": user["_id"]
+        })
+
+        if not conv:
+            return f"대화를 찾을 수 없습니다: {conversation_id}"
+
+        result = await conversations_collection.update_one(
+            {"_id": conversation_id, "user_id": user["_id"]},
+            {
+                "$push": {"messages": {"$each": messages}},
+                "$set": {"updated_at": datetime.utcnow()}
+            }
+        )
+
+        if result.modified_count > 0:
+            return f"대화에 {len(messages)}개의 메시지가 추가되었습니다."
+        else:
+            return "메시지 추가에 실패했습니다."
+    except HTTPException as e:
+        return f"인증 오류: {e.detail}"
+    except Exception as e:
+        return f"오류 발생: {str(e)}"
+
+# 정적 파일 서빙 (MCP보다 먼저 마운트)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# FastMCP를 FastAPI에 통합 - SSE 방식 사용
+# SSE 엔드포인트는 /sse 에 자동 생성됨
+mcp_app = mcp.sse_app()
+app.mount("", mcp_app)
 
 if __name__ == "__main__":
     import uvicorn
