@@ -4,36 +4,37 @@
 
 ```mermaid
 graph TB
-    subgraph Clients["AI Clients"]
+    subgraph AIClients["AI Clients"]
         Claude[Claude Desktop]
         ChatGPT[ChatGPT]
-        Browser[Web Browser]
     end
 
-    subgraph Server["Cloud Server"]
-        API[FastAPI Server]
-        SSE[MCP SSE]
+    User[User<br/>Web Browser]
+
+    subgraph Server["Cloud Server (FastAPI)"]
+        MCP[MCP Server<br/>SSE Endpoint]
         REST[REST API]
         Web[Web Dashboard]
+        Logic[Business Logic]
     end
 
     subgraph Database["Database"]
         MongoDB[(MongoDB)]
     end
 
-    Claude -->|MCP SSE| SSE
-    ChatGPT -->|MCP SSE| SSE
-    Browser -->|HTTPS| Web
+    Claude -->|MCP SSE| MCP
+    ChatGPT -->|MCP SSE| MCP
+    User -->|HTTPS| Web
 
-    SSE --> API
-    REST --> API
+    MCP --> Logic
+    REST --> Logic
     Web --> REST
 
-    API --> MongoDB
+    Logic --> MongoDB
 
     style Claude fill:#9b59b6,stroke:#7c3aed,color:#fff
     style ChatGPT fill:#3498db,stroke:#2563eb,color:#fff
-    style Browser fill:#10b981,stroke:#059669,color:#fff
+    style User fill:#10b981,stroke:#059669,color:#fff
     style Server fill:#f59e0b,stroke:#d97706
     style MongoDB fill:#ef4444,stroke:#dc2626,color:#fff
 ```
@@ -61,22 +62,30 @@ graph LR
 
 ```mermaid
 graph TB
-    C1[Claude Desktop]
-    C2[ChatGPT]
-    W1[Web Browser]
+    subgraph AI["AI Clients"]
+        C1[Claude Desktop]
+        C2[ChatGPT]
+    end
 
-    Server[Cloud Server<br/>FastAPI]
+    User[User<br/>Web Browser]
 
-    C1 -->|MCP SSE| Server
-    C2 -->|MCP SSE| Server
-    W1 -->|REST API| Server
+    subgraph Server["Cloud Server (FastAPI)"]
+        MCP[MCP Server]
+        REST[REST API]
+    end
 
-    Server --> DB[(MongoDB)]
+    C1 -->|MCP SSE| MCP
+    C2 -->|MCP SSE| MCP
+    User -->|HTTPS| REST
 
+    MCP --> DB[(MongoDB)]
+    REST --> DB
+
+    style AI fill:#e0e7ff,stroke:#6366f1
     style C1 fill:#9b59b6,stroke:#7c3aed,color:#fff
     style C2 fill:#3498db,stroke:#2563eb,color:#fff
-    style W1 fill:#10b981,stroke:#059669,color:#fff
-    style Server fill:#f59e0b,stroke:#d97706,color:#fff
+    style User fill:#10b981,stroke:#059669,color:#fff
+    style Server fill:#f59e0b,stroke:#d97706
     style DB fill:#ef4444,stroke:#dc2626,color:#fff
 ```
 
@@ -86,15 +95,15 @@ graph TB
 sequenceDiagram
     actor User
     participant Claude
-    participant Server
+    participant MCP as MCP Server
     participant DB
 
     User->>Claude: 회원가입/로그인
-    Claude->>Server: email, password
-    Server->>DB: 사용자 확인/생성
-    DB-->>Server: 사용자 정보
-    Server->>Server: JWT 토큰 생성
-    Server-->>Claude: access_token
+    Claude->>MCP: mcp_login(email, password)
+    MCP->>DB: 사용자 확인/생성
+    DB-->>MCP: 사용자 정보
+    MCP->>MCP: JWT 토큰 생성
+    MCP-->>Claude: access_token
     Claude-->>User: 로그인 완료
 ```
 
@@ -104,15 +113,15 @@ sequenceDiagram
 sequenceDiagram
     actor User
     participant Claude
-    participant Server
+    participant MCP as MCP Server
     participant DB
 
     User->>Claude: 대화 진행
-    Claude->>Server: save_conversation
-    Server->>Server: JWT 검증
-    Server->>DB: 대화 저장
-    DB-->>Server: conversation_id
-    Server-->>Claude: 저장 완료
+    Claude->>MCP: save_conversation + token
+    MCP->>MCP: JWT 검증
+    MCP->>DB: 대화 저장
+    DB-->>MCP: conversation_id
+    MCP-->>Claude: 저장 완료
     Claude-->>User: 완료 메시지
 ```
 
@@ -122,15 +131,15 @@ sequenceDiagram
 sequenceDiagram
     actor User
     participant ChatGPT
-    participant Server
+    participant MCP as MCP Server
     participant DB
 
     User->>ChatGPT: 이전 대화 불러오기
-    ChatGPT->>Server: load_conversation
-    Server->>Server: JWT 검증
-    Server->>DB: 대화 조회
-    DB-->>Server: 대화 데이터
-    Server-->>ChatGPT: messages
+    ChatGPT->>MCP: load_conversation + token
+    MCP->>MCP: JWT 검증
+    MCP->>DB: 대화 조회
+    DB-->>MCP: 대화 데이터
+    MCP-->>ChatGPT: messages
     ChatGPT-->>User: 컨텍스트 로드 완료
 ```
 
@@ -138,27 +147,34 @@ sequenceDiagram
 
 ```mermaid
 graph TB
-    subgraph API["FastAPI Server"]
-        MCP[MCP SSE Endpoint]
-        REST[REST API]
+    subgraph API["FastAPI Application"]
+        MCP[MCP Server<br/>SSE Endpoint]
+        REST[REST API<br/>Endpoints]
+    end
+
+    subgraph Logic["Business Logic"]
         Auth[JWT Authentication]
-        Logic[Business Logic]
+        Conv[Conversation Logic]
+        User[User Management]
     end
 
     subgraph DB["Database"]
         MongoDB[(MongoDB)]
-        Users[users]
-        Convs[conversations]
+        Users[users collection]
+        Convs[conversations collection]
     end
 
     MCP --> Auth
     REST --> Auth
-    Auth --> Logic
-    Logic --> MongoDB
+    Auth --> Conv
+    Auth --> User
+    Conv --> MongoDB
+    User --> MongoDB
     MongoDB --> Users
     MongoDB --> Convs
 
     style API fill:#fef3c7,stroke:#f59e0b
+    style Logic fill:#dbeafe,stroke:#3b82f6
     style DB fill:#fee2e2,stroke:#ef4444
 ```
 
