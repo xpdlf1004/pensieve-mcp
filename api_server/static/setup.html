@@ -45,27 +45,143 @@
         <!-- Page Header -->
         <div class="text-center mb-12">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">🔧 MCP 서버 설정</h1>
-            <p class="text-xl text-gray-600">Claude Code와 Pensieve를 연결하는 방법입니다</p>
+            <p class="text-xl text-gray-600">AI 어시스턴트와 Pensieve를 연결하세요</p>
         </div>
 
         <!-- Setup Steps -->
         <div class="space-y-8">
-            <!-- Step 1 -->
-            <div class="bg-white rounded-xl shadow-lg p-8">
+            <!-- Step 1: MCP 연결 (메인) -->
+            <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-indigo-200">
                 <div class="flex items-center mb-6">
                     <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
                         1
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-900 ml-4">Claude Code 설치</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 ml-4">MCP 서버 연결하기</h2>
+                    <span class="ml-3 bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">핵심 단계</span>
                 </div>
                 <p class="text-gray-700 mb-4">
-                    먼저 Claude Code가 설치되어 있어야 합니다. 아직 설치하지 않았다면
-                    <a href="https://code.claude.com" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline">공식 웹사이트</a>에서 설치 방법을 확인하세요.
+                    사용하시는 AI 환경에 맞는 방법을 선택하세요:
                 </p>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-600">✓ macOS, Windows, Linux 지원</p>
-                    <p class="text-sm text-gray-600">✓ 터미널 기반 AI 코딩 도구</p>
-                    <p class="text-sm text-gray-600">✓ MCP (Model Context Protocol) 지원</p>
+
+                <!-- Tab Navigation -->
+                <div class="flex flex-wrap border-b border-gray-200 mb-6">
+                    <button id="tab-claude-code" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-indigo-600 text-indigo-600 bg-indigo-50 rounded-t-lg">
+                        <i class="fas fa-terminal mr-2"></i>Claude Code
+                    </button>
+                    <button id="tab-connector" class="tab-btn px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300">
+                        <i class="fas fa-plug mr-2"></i>Claude 커넥터
+                    </button>
+                    <button id="tab-chatgpt" class="tab-btn px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300">
+                        <i class="fas fa-robot mr-2"></i>ChatGPT
+                    </button>
+                </div>
+
+                <!-- Claude Code Tab Content -->
+                <div id="content-claude-code" class="tab-content">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">CLI 터미널</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">
+                        터미널에서 다음 명령어를 실행하여 Pensieve MCP 서버를 추가하세요:
+                    </p>
+                    <div class="mb-6">
+                        <div class="relative">
+                            <button id="copy-prod" class="absolute top-2 right-2 px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                                <i class="fas fa-copy mr-1"></i> 복사
+                            </button>
+                            <pre id="prod-command" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">claude mcp add --transport sse pensieve https://pensieve.borihopang.com/sse</pre>
+                        </div>
+                        <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-4">
+                            <p class="text-sm text-green-700">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                명령어 실행 후 바로 사용 가능합니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                        <p class="text-sm text-blue-700">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <strong>참고:</strong> Claude Code를 재시작할 필요 없이 HTTPS를 통해 안전하게 연결됩니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Claude Connector Tab Content -->
+                <div id="content-connector" class="tab-content hidden">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">웹/데스크톱 앱</span>
+                        <span class="ml-2 bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded">Pro/Team 전용</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">
+                        Claude 웹 또는 데스크톱 앱에서 커스텀 커넥터로 연결할 수 있습니다:
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">
+                                <i class="fas fa-list-ol mr-2 text-indigo-600"></i>설정 방법
+                            </h4>
+                            <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                                <li>Claude 설정 <i class="fas fa-arrow-right mx-1 text-gray-400"></i> <strong>커넥터</strong> 메뉴로 이동</li>
+                                <li><strong>"커스텀 커넥터 추가"</strong> 클릭</li>
+                                <li>아래 URL 입력:</li>
+                            </ol>
+                        </div>
+
+                        <div class="relative">
+                            <button id="copy-connector" class="absolute top-2 right-2 px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                                <i class="fas fa-copy mr-1"></i> 복사
+                            </button>
+                            <pre id="connector-url" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">https://pensieve.borihopang.com/sse</pre>
+                        </div>
+
+                        <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-4">
+                            <p class="text-sm text-green-700">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                URL만 입력하면 자동으로 연결됩니다!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ChatGPT Tab Content -->
+                <div id="content-chatgpt" class="tab-content hidden">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">OpenAI ChatGPT</span>
+                        <span class="ml-2 bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded">개발자 모드 필요</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">
+                        ChatGPT에서도 MCP 서버를 연결할 수 있습니다:
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">
+                                <i class="fas fa-list-ol mr-2 text-green-600"></i>설정 방법
+                            </h4>
+                            <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                                <li>ChatGPT <strong>설정</strong> 메뉴 열기</li>
+                                <li><strong>연동 앱 및 커넥터</strong> 선택</li>
+                                <li><strong>개발자 모드</strong> 활성화</li>
+                                <li><strong>"만들기"</strong> 클릭</li>
+                                <li>아래 URL 입력:</li>
+                            </ol>
+                        </div>
+
+                        <div class="relative">
+                            <button id="copy-chatgpt" class="absolute top-2 right-2 px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                                <i class="fas fa-copy mr-1"></i> 복사
+                            </button>
+                            <pre id="chatgpt-url" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">https://pensieve.borihopang.com/sse</pre>
+                        </div>
+
+                        <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-4">
+                            <p class="text-sm text-green-700">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                설정 완료 후 ChatGPT에서 Pensieve 도구를 사용할 수 있습니다!
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -75,20 +191,27 @@
                     <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
                         2
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-900 ml-4">Pensieve 사용자 계정 생성</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 ml-4">계정 생성 및 로그인</h2>
                 </div>
                 <p class="text-gray-700 mb-4">
-                    Pensieve를 사용하려면 먼저 사용자 계정을 생성해야 합니다:
+                    AI에게 회원가입 또는 로그인을 요청하세요:
                 </p>
                 <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                    <p class="text-gray-700">1. 이 대시보드의 메인 페이지로 이동</p>
-                    <p class="text-gray-700">2. "회원가입" 버튼 클릭</p>
-                    <p class="text-gray-700">3. 이메일과 비밀번호로 계정 생성</p>
+                    <p class="text-gray-700 mb-2"><strong>처음 사용시 (회원가입):</strong></p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div>Pensieve에 회원가입해줘. 이메일: your@email.com, 비밀번호: yourpassword</div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-700 mb-2"><strong>이미 계정이 있다면 (로그인):</strong></p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div>Pensieve에 로그인해줘. 이메일: your@email.com, 비밀번호: yourpassword</div>
+                    </div>
                 </div>
                 <div class="mt-4 bg-blue-50 border-l-4 border-blue-400 p-4">
                     <p class="text-sm text-blue-700">
                         <i class="fas fa-info-circle mr-1"></i>
-                        생성한 계정 정보는 다음 단계에서 사용됩니다.
+                        웹 대시보드(<a href="/" class="underline">메인 페이지</a>)에서도 회원가입이 가능합니다.
                     </p>
                 </div>
             </div>
@@ -96,76 +219,13 @@
             <!-- Step 3 -->
             <div class="bg-white rounded-xl shadow-lg p-8">
                 <div class="flex items-center mb-6">
-                    <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
-                        3
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 ml-4">Claude Code에 MCP 서버 추가</h2>
-                </div>
-                <p class="text-gray-700 mb-4">
-                    터미널에서 다음 명령어를 실행하여 Pensieve MCP 서버를 추가하세요:
-                </p>
-
-                <div class="mb-6">
-                    <div class="relative">
-                        <button id="copy-prod" class="absolute top-2 right-2 px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
-                            <i class="fas fa-copy mr-1"></i> 복사
-                        </button>
-                        <pre id="prod-command" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">claude mcp add --transport sse pensieve https://pensieve.borihopang.com/sse</pre>
-                    </div>
-                    <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-4">
-                        <p class="text-sm text-green-700">
-                            <i class="fas fa-check-circle mr-1"></i>
-                            인터넷이 연결된 어디서나 사용할 수 있습니다.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                    <p class="text-sm text-blue-700">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        <strong>참고:</strong>
-                    </p>
-                    <ul class="list-disc list-inside text-sm text-blue-700 mt-2 space-y-1">
-                        <li>명령어 실행 후 MCP 서버가 자동으로 추가됩니다</li>
-                        <li>Claude Code를 재시작할 필요 없이 바로 사용 가능합니다</li>
-                        <li>HTTPS를 통해 안전하게 연결됩니다</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Step 4 -->
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="flex-shrink-0 w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
-                        4
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 ml-4">Pensieve 로그인</h2>
-                </div>
-                <p class="text-gray-700 mb-4">
-                    Claude Code 터미널에서 Pensieve 명령어를 사용하여 로그인하세요:
-                </p>
-                <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
-                    <div># 회원가입한 이메일과 비밀번호로 로그인</div>
-                    <div>Pensieve에 로그인해줘. 이메일: your@email.com, 비밀번호: yourpassword</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-gray-700 mb-2">또는 register 명령어로 바로 가입:</p>
-                    <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
-                        <div>Pensieve에 회원가입해줘. 이메일: your@email.com, 비밀번호: yourpassword</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 5 -->
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="flex items-center mb-6">
                     <div class="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
-                        5
+                        3
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 ml-4">Pensieve 사용하기</h2>
                 </div>
                 <p class="text-gray-700 mb-4">
-                    로그인 후 Claude Code에서 Pensieve의 다양한 기능을 사용할 수 있습니다:
+                    로그인 후 다양한 기능을 사용할 수 있습니다:
                 </p>
                 <div class="space-y-4">
                     <div class="bg-gray-50 rounded-lg p-4">
@@ -198,35 +258,6 @@
                         <i class="fas fa-check-circle mr-1"></i>
                         모든 대화는 클라우드에 안전하게 저장되어 언제든지 다시 불러올 수 있습니다!
                     </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Troubleshooting -->
-        <div class="mt-12 bg-gray-100 rounded-xl p-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">❓ 문제 해결</h2>
-            <div class="space-y-4">
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">MCP 서버 연결 확인</h3>
-                    <div class="bg-gray-900 text-green-400 p-3 rounded font-mono text-sm mb-2">
-                        claude mcp list
-                    </div>
-                    <p class="text-gray-600 ml-4">등록된 MCP 서버 목록을 확인할 수 있습니다.</p>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">로그인이 안 될 때</h3>
-                    <ul class="list-disc list-inside space-y-1 text-gray-600 ml-4">
-                        <li>이메일과 비밀번호가 정확한지 확인</li>
-                        <li>먼저 웹 대시보드에서 회원가입을 완료했는지 확인</li>
-                        <li>서버 URL이 올바른지 확인 (로컬 또는 운영)</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">MCP 서버 제거 방법</h3>
-                    <div class="bg-gray-900 text-green-400 p-3 rounded font-mono text-sm mb-2">
-                        claude mcp remove pensieve
-                    </div>
-                    <p class="text-gray-600 ml-4">등록된 MCP 서버를 제거합니다.</p>
                 </div>
             </div>
         </div>
@@ -294,6 +325,45 @@
         // 각 복사 버튼 설정
         setupCopyButton('copy-local', 'local-command');
         setupCopyButton('copy-prod', 'prod-command');
+        setupCopyButton('copy-connector', 'connector-url');
+        setupCopyButton('copy-chatgpt', 'chatgpt-url');
+
+        // 탭 전환 기능
+        const tabs = {
+            'tab-claude-code': 'content-claude-code',
+            'tab-connector': 'content-connector',
+            'tab-chatgpt': 'content-chatgpt'
+        };
+
+        Object.keys(tabs).forEach(tabId => {
+            const tabBtn = document.getElementById(tabId);
+            if (!tabBtn) return;
+
+            tabBtn.addEventListener('click', () => {
+                // 모든 탭 버튼 비활성화
+                Object.keys(tabs).forEach(t => {
+                    const btn = document.getElementById(t);
+                    if (btn) {
+                        btn.classList.remove('border-indigo-600', 'text-indigo-600', 'bg-indigo-50');
+                        btn.classList.add('text-gray-500', 'border-transparent');
+                    }
+                });
+
+                // 클릭된 탭 활성화
+                tabBtn.classList.remove('text-gray-500', 'border-transparent');
+                tabBtn.classList.add('border-indigo-600', 'text-indigo-600', 'bg-indigo-50');
+
+                // 모든 콘텐츠 숨기기
+                Object.values(tabs).forEach(contentId => {
+                    const content = document.getElementById(contentId);
+                    if (content) content.classList.add('hidden');
+                });
+
+                // 선택된 콘텐츠 표시
+                const selectedContent = document.getElementById(tabs[tabId]);
+                if (selectedContent) selectedContent.classList.remove('hidden');
+            });
+        });
     </script>
 </body>
 </html>
